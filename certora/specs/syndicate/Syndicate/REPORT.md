@@ -6,7 +6,7 @@ This report describes the work on understanding and finding properties and invar
 ## Objective
 
 The objective was to understand the syndicate contract well enough to state important properties and invariants in a
-Certora specification. As it turned out, some of the subgoals were to obtain a high level understanding of Stakehouse
+Certora specification. As it turned out, some of the subgoals became to obtain a high level understanding of Stakehouse
 LSD Networks and learn about concepts from the Stakehouse protocol.
 
 ## Approach
@@ -53,7 +53,8 @@ is increased only when receiving rewards.
 > Methods which do not change the balance of the syndicate do not affect `totalETHReceived`.
 
 The `previewUnclaimedETHAsFreeFloatingStaker` method has the following two properties, which verifies that
-the method increases by the correct amount when rewards are received, and it only changes when rewards are received.
+the method increases by the correct amount when rewards are received, and it only changes when rewards are received or
+free floating stake is claimed.
 
 > When a reward is received, then `previewUnclaimedETHAsFreeFloatingStaker` is increased by an amount corresponding
 > to the staker's share of sETH in the syndicate.
@@ -61,7 +62,7 @@ the method increases by the correct amount when rewards are received, and it onl
 > Methods, which do not change the balance of the syndicate and do not claim free floating staker rewards, do not
 > affect `previewUnclaimedETHAsFreeFloatingStaker`.
 
-The `rewardPreviewUnclaimedETHAsCollateralizedSlotOwner` methods satisfies two properties, analogous to those of
+The `previewUnclaimedETHAsCollateralizedSlotOwner` method satisfies two properties, analogous to those of
 `previewUnclaimedETHAsFreeFloatingStaker`, but for collateralized SLOT owners instead of free floating stakers:
 
 > When a reward is received, then `previewUnclaimedETHAsCollateralizedSlotOwner` is increased
@@ -70,8 +71,8 @@ The `rewardPreviewUnclaimedETHAsCollateralizedSlotOwner` methods satisfies two p
 > Methods, which do not change the balance of the syndicate and do not claim collateralized
 > SLOT owner rewards, do not affect `previewUnclaimedETHAsCollateralizedSlotOwner`.
 
-We want the `stake` method to increase the received rewards by an amount corresponding to the added stake.
-Therefore `stake` method must satisfy:
+We want the `stake` method to increase the share of rewards by an amount corresponding to the added stake.
+Therefore the `stake` method must satisfy:
 
 > When increasing stake with the `stake` method, the following rewards for that user become correspondingly higher.
 
@@ -80,15 +81,16 @@ The `unstake` method must satisfy the opposite property:
 > When decreasing stake with the `unstake` method, the following rewards for that user become correspondingly lower.
 
 We want `claimAsStaker` to claim the amount specified by `previewUnclaimedETHAsFreeFloatingStaker`.
-So are two relations between the `claimAsStaker` method and the `previewUnclaimedETHAsFreeFloatingStaker`:
+There are two relations between the `claimAsStaker` method and the `previewUnclaimedETHAsFreeFloatingStaker`:
 
-> If `previewUnclaimedClaimAsStaker` is `x` ETH, then `claimAsStaker` will transfer `x` ETH to the recipient.
+> If `previewUnclaimedETHAsFreeFloatingStaker` is `x` ETH, then `claimAsStaker` will transfer `x` ETH to the recipient.
 
-> Immediately after `claimAsStaker` has been called, `previewUnclaimedClaimAsStaker` is zero.
+> Immediately after `claimAsStaker` has been called, `previewUnclaimedETHAsFreeFloatingStaker` is zero.
 
 Notice that the former property about `claimAsStaker` implies that it is unaffected by methods not rewarding and
-not claiming free floating staker rewards, like `previewUnclaimedClaimAsStaker`. Also, after rewarding, the
-claimed stake is correspondingly higher, which also follows from the relation to `previewUnclaimedClaimAsStaker`.
+not claiming free floating staker rewards, like `previewUnclaimedETHAsFreeFloatingStaker` is. Also, after syndicate is
+rewarded, the claimed stake is correspondingly higher. This also follows from the relation to
+`previewUnclaimedETHAsFreeFloatingStaker`.
 
 There are two relations between `claimAsCollateralizedSLOTOwner` and
 `previewUnclaimedETHAsCollateralizedSlotOwner`, analogous to those relations between
@@ -104,8 +106,10 @@ There are two relations between `claimAsCollateralizedSLOTOwner` and
 
 There is a accompanying Certora specification located at
 https://github.com/andreaslyn/lsd-arena/blob/main/certora/specs/syndicate/Syndicate/Syndicate.spec
+
 The specification uses a Certora helper contract, located at
 https://github.com/andreaslyn/lsd-arena/blob/main/contracts/specs/syndicate/SyndicateHelper.sol
+The helper contract defines some utility functions used in the Certora specification.
 
 Note that the Certora specification has been tested with the demo version of Certora, which seemingly did not work with
-this specification because of restrictions of the demo version.
+this specification because of restrictions of the Certora demo version.

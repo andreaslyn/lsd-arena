@@ -32,24 +32,28 @@ the [Certora documentation](https://docs.certora.com/en/latest/index.html) was u
 ## Summary of the Syndicate Contract
 
 The primary function of the syndicate contract is to receive rewards in ETH and distribute it between collateralized
-SLOT owners and free floating stakers. In an LSD Network, per KNOT there is one collateralized SLOT owner and one
-free floating staker, i.e. the Node Runner's smart wallet and the Fees and MEV Pool, respectively. There is a KNOT
-for each validator associated to the LSD Network. It requires 32 ETH to create a validator, 4 ETH from the Node Runner,
-4 ETH from the Fees and MEV Pool, and 24 ETH from the Protected Staking Pool.
+SLOT owners and free floating stakers.
 
 The collateralized SLOT owners and free floating stakers get SLOT tokens when the validator is created. Each SLOT token
 gives rise to a number of sETH, which can be staked to the syndicate. The share of sETH staked to the syndicate
 corresponds to the share of ETH rewards which users can claim from the syndicate.
 
+The syndicate resides within an LSD Network. In an LSD Network, per KNOT there is one collateralized SLOT owner and one
+free floating staker, i.e. the Node Runner's smart wallet and the Fees and MEV Pool, respectively. There is a KNOT for
+each validator associated to the LSD Network. It requires 32 ETH to create a validator, 4 ETH from the Node Runner,
+4 ETH from the Fees and MEV Pool, and 24 ETH from the Protected Staking Pool.
+
 ## Properties of the Syndicate Contract
 
-We will start with two simple properties of the `totalETHReceived` method.
+We will start with two simple properties of the `totalETHReceived` method, to show that `totalETHReceived`
+is increased only when receiving rewards.
 
 > When a reward is received, then `totalETHReceived` is increased by that amount.
 
 > Methods which do not change the balance of the syndicate do not affect `totalETHReceived`.
 
-The `previewUnclaimedETHAsFreeFloatingStaker` method has the following two properties.
+The `previewUnclaimedETHAsFreeFloatingStaker` method has the following two properties, which verifies that
+the method increases by the correct amount when rewards are received, and it only changes when rewards are received.
 
 > When a reward is received, then `previewUnclaimedETHAsFreeFloatingStaker` is increased by an amount corresponding
 > to the staker's share of sETH in the syndicate.
@@ -66,19 +70,25 @@ The `rewardPreviewUnclaimedETHAsCollateralizedSlotOwner` methods satisfies two p
 > Methods, which do not change the balance of the syndicate and do not claim collateralized
 > SLOT owner rewards, do not affect `previewUnclaimedETHAsCollateralizedSlotOwner`.
 
-The `stake` method satisfies:
+We want the `stake` method to increase the received rewards by an amount corresponding to the added stake.
+Therefore `stake` method must satisfy:
 
 > When increasing stake with the `stake` method, the following rewards for that user become correspondingly higher.
 
-The `unstake` method satisfies the opposite property:
+The `unstake` method must satisfy the opposite property:
 
 > When decreasing stake with the `unstake` method, the following rewards for that user become correspondingly lower.
 
-There are two relations between the `claimAsStaker` method and the `previewUnclaimedETHAsFreeFloatingStaker`:
+We want `claimAsStaker` to claim the amount specified by `previewUnclaimedETHAsFreeFloatingStaker`.
+So are two relations between the `claimAsStaker` method and the `previewUnclaimedETHAsFreeFloatingStaker`:
 
 > If `previewUnclaimedClaimAsStaker` is `x` ETH, then `claimAsStaker` will transfer `x` ETH to the recipient.
 
 > Immediately after `claimAsStaker` has been called, `previewUnclaimedClaimAsStaker` is zero.
+
+Notice that the former property about `claimAsStaker` implies that it is unaffected by methods not rewarding and
+not claiming free floating staker rewards, like `previewUnclaimedClaimAsStaker`. Also, after rewarding, the
+claimed stake is correspondingly higher, which also follows from the relation to `previewUnclaimedClaimAsStaker`.
 
 There are two relations between `claimAsCollateralizedSLOTOwner` and
 `previewUnclaimedETHAsCollateralizedSlotOwner`, analogous to those relations between

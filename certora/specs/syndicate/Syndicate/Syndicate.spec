@@ -46,6 +46,7 @@ definition precision_div(uint256 x, uint256 y) returns uint256 =
     (x * PRECISION()) / y;
 
 // An equality comparison treats numbers with PRECISION in difference to be equal.
+// There is probably a better way to work with rounding issues!
 definition precision_eq(uint256 x, uint256 y) returns bool =
     x - y <= PRECISION() && y - x <= PRECISION();
 

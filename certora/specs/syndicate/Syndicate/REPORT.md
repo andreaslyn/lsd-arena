@@ -107,9 +107,9 @@ There are two relations between `claimAsCollateralizedSLOTOwner` and
 There is a accompanying Certora specification located at
 https://github.com/andreaslyn/lsd-arena/blob/main/certora/specs/syndicate/Syndicate/Syndicate.spec
 
+Note that the Certora specification has been tested with the demo version of Certora, which seemingly did not work with
+this specification because of restrictions of the Certora demo version.
+
 The specification uses a Certora helper contract, located at
 https://github.com/andreaslyn/lsd-arena/blob/main/contracts/specs/syndicate/SyndicateHelper.sol
 The helper contract defines some utility functions used in the Certora specification.
-
-Note that the Certora specification has been tested with the demo version of Certora, which seemingly did not work with
-this specification because of restrictions of the Certora demo version.

@@ -46,6 +46,8 @@ definition precision_eq(uint256 x, uint256 y) returns bool =
 
 definition asEther(uint256 x) returns uint256 = x * 1000000000000000000;
 
+// This rule verifies that totalETHReceived is correctly increased
+// after rewards are received.
 rule rewardTotalETHReceived() {
     uint256 t0 = totalETHReceived();
 
@@ -58,6 +60,8 @@ rule rewardTotalETHReceived() {
     assert t == t0 + actualReward;
 }
 
+// This rule verifies that totalETHReceived is uaffected by methods
+// different than reward.
 rule noRewardTotalETHReceived(method f)
 filtered {
     f -> f.selector != reward(uint256).selector
@@ -72,6 +76,8 @@ filtered {
     assert t == t0;
 }
 
+// This rule verifies that previewUnclaimedETHAsFreeFloatingStaker is
+// correctly increased after rewards are received.
 rule rewardPreviewUnclaimedETHAsFreeFloatingStaker() {
     address staker;
     bytes[] knots;
@@ -93,6 +99,8 @@ rule rewardPreviewUnclaimedETHAsFreeFloatingStaker() {
         precision_div(theStake, totalKnotStake));
 }
 
+// This rule verifies that previewUnclaimedETHAsFreeFloatingStaker is
+// uaffected by methods that do not claim as staker and do not reward.
 rule noRewarNoClaimPreviewUnclaimedETHAsFreeFloatingStaker(method f)
 filtered {
     f -> f.selector != claimAsStaker(address, bytes[]).selector
@@ -113,6 +121,8 @@ filtered {
     assert before == after;
 }
 
+// This rule verifies that previewUnclaimedETHAsCollateralizedSlotOwner is
+// correctly increased after rewards are received.
 rule rewardPreviewUnclaimedETHAsCollateralizedSlotOwner() {
     address staker;
     bytes[] knots;
@@ -137,6 +147,8 @@ rule rewardPreviewUnclaimedETHAsCollateralizedSlotOwner() {
         precision_div(theStake, totalCollateralizedStake));
 }
 
+// This rule verifies that previewUnclaimedETHAsCollateralizedSlotOwner is
+// uaffected by methods that do not claim as SLOT owner and do not reward.
 rule noRewardNoClaimPreviewUnclaimedETHAsCollateralizedSlotOwner(method f)
 filtered {
     f -> f.selector != claimAsCollateralizedSLOTOwner(address, bytes[]).selector
@@ -157,6 +169,8 @@ filtered {
     assert before == after;
 }
 
+// This rule verifies that when stake is increased, the amount of rewards
+// received are correspondingly increased.
 rule stakeReward() {
     address staker;
     bytes[] knots;
@@ -190,6 +204,8 @@ rule stakeReward() {
         precision_div(stakedAfter, totalKnotStakeAfter));
 }
 
+// This rule verifies that when stake is decreased, the amount of rewards
+// received are correspondingly decreased.
 rule unstakeReward() {
     env eUnstake;
     bytes[] knots;
@@ -234,6 +250,8 @@ rule unstakeReward() {
         precision_div(stakedAfter, totalKnotStakeAfter));
 }
 
+// This rule verifies that claimAsStaker, claims the amount
+// specified by previewUnclaimedETHAsFreeFloatingStaker.
 rule previewUnclaimedClaimAsStaker() {
     env e;
     address recipient;
@@ -248,6 +266,8 @@ rule previewUnclaimedClaimAsStaker() {
     assert unclaimed == balanceAfter - balanceBefore;
 }
 
+// This rule verifies that claimAsCollateralizedSLOTOwner, claims the amount
+// specified by previewUnclaimedETHAsCollateralizedSlotOwner.
 rule previewUnclaimedClaimAsCollateralizedSlotOwner() {
     env e;
     address recipient;

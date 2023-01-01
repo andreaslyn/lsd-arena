@@ -1,10 +1,15 @@
-# Objective
+# Syndicate Smart Contract Report
+
+This report describes the work on understanding and finding properties and invariants of the
+[syndicate contract](https://github.com/stakehouse-dev/lsd-arena/blob/main/contracts/syndicate/Syndicate.sol).
+
+## Objective
 
 The objective was to understand the syndicate contract well enough to state important properties and invariants in a
 Certora specification. As it turned out, some of the subgoals were to obtain a high level understanding of Stakehouse
 LSD Networks and learn about concepts from the Stakehouse protocol.
 
-# Approach
+## Approach
 
 Background knowledge on Stakehouse LSD Networks was obtained through the official
 [LSD Network documentation](https://docs.joinstakehouse.com/lsd/overview).
@@ -24,7 +29,7 @@ To state properties of the syndicate contract, it was time to write a Certora sp
 The [Certora tutorials](https://github.com/Certora/Tutorials) were useful to learn initially, and
 the [Certora documentation](https://docs.certora.com/en/latest/index.html) was used extensively.
 
-# Summary of the Syndicate Contract
+## Summary of the Syndicate Contract
 
 The primary function of the syndicate contract is to receive rewards in ETH and distribute it between collateralized
 SLOT owners and free floating stakers. In an LSD Network, per KNOT there is one collateralized SLOT owner and one
@@ -36,7 +41,7 @@ The collateralized SLOT owners and free floating stakers get SLOT tokens when th
 gives rise to a number of sETH, which can be staked to the syndicate. The share of sETH staked to the syndicate
 corresponds to the share of ETH rewards which users can claim from the syndicate.
 
-# Properties of the Syndicate Contract
+## Properties of the Syndicate Contract
 
 We will start with two simple properties of the `totalETHReceived` method.
 
@@ -85,6 +90,12 @@ There are two relations between `claimAsCollateralizedSLOTOwner` and
 > Immediately after `claimAsCollateralizedSLOTOwner` has been called,
 > `previewUnclaimedETHAsCollateralizedSlotOwner` is zero.
 
-# Appendix
+## Appendix
 
-Link to (untested) syndicate spec and syndicate helper.
+There is a accompanying Certora specification located at
+https://github.com/andreaslyn/lsd-arena/blob/main/certora/specs/syndicate/Syndicate/Syndicate.spec
+The specification uses a Certora helper contract, located at
+https://github.com/andreaslyn/lsd-arena/blob/main/contracts/specs/syndicate/SyndicateHelper.sol
+
+Note that the Certora specification has been tested with the demo version of Certora, which seemingly did not work with
+this specification because of restrictions of the demo version.

@@ -255,7 +255,7 @@ rule unstakeReward() {
         precision_div(stakedAfter, totalKnotStakeAfter));
 }
 
-// If previewUnclaimedClaimAsStaker is x ETH, then claimAsStaker will
+// If previewUnclaimedETHAsFreeFloatingStaker is x ETH, then claimAsStaker will
 // transfer x ETH to the recipient.
 rule previewUnclaimedClaimAsStaker() {
     env e;
@@ -272,7 +272,7 @@ rule previewUnclaimedClaimAsStaker() {
 }
 
 // Immediately after claimAsStaker has been called,
-// previewUnclaimedClaimAsStaker is zero.
+// previewUnclaimedETHAsFreeFloatingStaker is zero.
 rule claimAsStakerPreviewUnclaimed() {
     env e;
     address recipient;

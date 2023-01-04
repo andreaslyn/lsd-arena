@@ -34,9 +34,10 @@ the [Certora documentation](https://docs.certora.com/en/latest/index.html) was u
 The primary function of the syndicate contract is to receive rewards in ETH and distribute it between collateralized
 SLOT owners and free floating stakers.
 
-The collateralized SLOT owners and free floating stakers get SLOT tokens when the validator is created. Each SLOT token
-gives rise to a number of sETH, which can be staked to the syndicate. The share of sETH staked to the syndicate
-corresponds to the share of ETH rewards which users can claim from the syndicate.
+The collateralized SLOT owners and free floating stakers get SLOT tokens when the validator is created. The share of
+SLOT tokens of the collateralized slot owners correspond to the share of ETH rewards they can claim from the syndicate.
+The SLOT tokens of the free floating stakers give rise to a certain amount of sETH. The sETH can be staked at the
+syndicate, and the share of staked sETH corresponds to the share of ETH rewards they can claim.
 
 The syndicate resides within an LSD Network. In an LSD Network, per KNOT there is one collateralized SLOT owner and one
 free floating staker, i.e. the Node Runner's smart wallet and the Fees and MEV Pool, respectively. There is a KNOT for
@@ -66,7 +67,7 @@ The `previewUnclaimedETHAsCollateralizedSlotOwner` method satisfies two properti
 `previewUnclaimedETHAsFreeFloatingStaker`, but for collateralized SLOT owners instead of free floating stakers:
 
 > When a reward is received, then `previewUnclaimedETHAsCollateralizedSlotOwner` is increased
-> by an amount corresponding to the staker's share of sETH in the syndicate.
+> by an amount corresponding to the user's share of SLOT tokens.
 
 > Methods, which do not change the balance of the syndicate and do not claim collateralized
 > SLOT owner rewards, do not affect `previewUnclaimedETHAsCollateralizedSlotOwner`.
